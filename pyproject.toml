@@ -1,0 +1,25 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "first_game"
+version = "0.0.1"
+authors = [
+  { name="melon", email="author@example.com" },
+]
+description = "A small python game for practicing on pygame"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["pygame"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: Freeware",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/pypa/sampleproject"
+
+[project.scripts]
+first_game = "first_game.game:run"
