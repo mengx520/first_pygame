@@ -1,10 +1,11 @@
 import pygame
+import os
 
 def run():
     # pygame setup
     pygame.init()
     
-    screen = pygame.display.set_mode((1280,720))
+    screen = pygame.display.set_mode((1728,1117))
     clock = pygame.time.Clock()
     running = True
     delta_time = 0
@@ -12,6 +13,12 @@ def run():
     # player variables
     player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
     player_speed = 300
+
+    # load player image
+    player_img = pygame.image.load(os.path.join("assets", "ship_small.png"))
+    player_img.convert()
+    player_img_rect = player_img.get_rect()
+
 
     player_projectiles = []
     projectiles_speed = 400
@@ -62,9 +69,12 @@ def run():
         # Fill the display with a solid color
         screen.fill("black")  
 
+
         # Render the graphics here.
         # draw player 
-        pygame.draw.circle(screen, "white", player_pos, 15)
+        # pygame.draw.circle(screen, "white", player_pos, 15)
+        # draw player image on screen
+        screen.blit(player_img, (player_pos.x - player_img_rect.w / 2, player_pos.y - player_img_rect.h / 2))
 
         # draw projectiles
         for p in player_projectiles:
