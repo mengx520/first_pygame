@@ -6,7 +6,7 @@ def run():
     first section was to initialize required variables of the game
     '''
     pygame.init()
-    
+
     screen = pygame.display.set_mode((1600,900))
     # creating screen barrier avoiding player go out of screen
     # using screen.get_width() to make the barrier ajusted automatically based on screen setting
@@ -30,7 +30,13 @@ def run():
     projectiles_delay = 500
     prev_projectile_time = 0
 
-    ''' 
+    # creating enemy variables
+    enemies = []
+    enemies.append(pygame.Rect(800, 100, 50, 50))
+
+
+
+    '''
     main game logic starting from here
     '''
     while running:
@@ -62,8 +68,9 @@ def run():
             # check if enough time has passed before creating new projectile
             if pygame.time.get_ticks() - prev_projectile_time > projectiles_delay:
                 # new prjectile starts from above player
-                new_projectile = pygame.Vector2(player_pos.center)
-                new_projectile.y -= 40
+                # new_projectile = pygame.Vector2(player_pos.center)
+                # for testing projectile collision with enemy, creating rect instead of vector
+                new_projectile = pygame.Rect(player_pos.x + player_pos.w / 2, player_pos.y, 3, 10)
                 player_projectiles.append(new_projectile)
                 # saving the previous projectile creation time
                 prev_projectile_time = pygame.time.get_ticks()
@@ -77,28 +84,37 @@ def run():
             if p.y < -15:
                 del player_projectiles[i]
 
-        # Fill the display with a solid color
-        screen.fill("black")  
+        # check enemies and projectile collision
+        for e in range(len(enemies) - 1, -1, -1):
+             collision_projectile_index = enemies[e].collidelist(player_projectiles)
+             if collision_projectile_index != -1:
+                del enemies[e]
+                # remove collision projectile index from projectile list
+                del player_projectiles[collision_projectile_index]
 
+
+        # Fill the display with a solid color
+        screen.fill("black")
 
         # Render the graphics here.
-        # draw player 
+        # draw player
         # pygame.draw.circle(screen, "white", player_pos, 15)
         # draw player image on screen
         screen.blit(player_img, (player_pos.x, player_pos.y))
 
         # draw projectiles
         for p in player_projectiles:
-            # initialized position to draw projectiles
-            projectile_rect = pygame.Rect(p.x, p.y, 3, 10)
             # draw projectiles
-            pygame.draw.rect(screen, "red", projectile_rect)
+            pygame.draw.rect(screen, "red", p)
 
+        # draw enemies
+        for e in enemies:
+            pygame.draw.rect(screen, "green", e)
 
         # Refresh on-screen display
-        pygame.display.flip()  
+        pygame.display.flip()
         # wait until next frame (at 60 FPS)
         # dt is delta time in seconds since last frame, used for framerate-independent physics.
-        delta_time = clock.tick(60) / 1000        
-    
+        delta_time = clock.tick(60) / 1000
+
     pygame.quit()
