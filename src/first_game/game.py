@@ -2,23 +2,27 @@ import pygame
 import os
 
 def run():
-    # pygame setup
+    '''
+    first section was to initialize required variables of the game
+    '''
     pygame.init()
     
-    screen = pygame.display.set_mode((1728,1117))
+    screen = pygame.display.set_mode((1600,900))
+    # creating screen barrier avoiding player go out of screen
+    # using screen.get_width() to make the barrier ajusted automatically based on screen setting
+    screen_barrier = pygame.Rect(0, 0, screen.get_width(), screen.get_height())
     clock = pygame.time.Clock()
     running = True
     delta_time = 0
 
-    # player variables
-    player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
-    player_speed = 300
-
     # load player image
-    player_img = pygame.image.load(os.path.join("assets", "ship_small.png"))
-    player_img.convert()
-    player_img_rect = player_img.get_rect()
+    player_img = pygame.image.load(os.path.join("assets", "ship_small.png")).convert()
 
+    # player variables
+    player_pos = player_img.get_rect()
+    player_pos.x = screen.get_width() / 2 - player_pos.w / 2
+    player_pos.y = screen.get_height() / 2 - player_pos.h / 2
+    player_speed = 300
 
     player_projectiles = []
     projectiles_speed = 400
@@ -26,6 +30,9 @@ def run():
     projectiles_delay = 500
     prev_projectile_time = 0
 
+    ''' 
+    main game logic starting from here
+    '''
     while running:
         # Process player inputs.
         # poll for events
@@ -47,12 +54,16 @@ def run():
         if keys[pygame.K_d]:
             player_pos.x += player_speed * delta_time
 
+        # limited player movement to screen space
+        player_pos.clamp_ip(screen_barrier)
+
         # projectiles logic
         if keys[pygame.K_SPACE]:
             # check if enough time has passed before creating new projectile
             if pygame.time.get_ticks() - prev_projectile_time > projectiles_delay:
                 # new prjectile starts from above player
-                new_projectile = pygame.Vector2(player_pos.x,  player_pos.y - 8)
+                new_projectile = pygame.Vector2(player_pos.center)
+                new_projectile.y -= 40
                 player_projectiles.append(new_projectile)
                 # saving the previous projectile creation time
                 prev_projectile_time = pygame.time.get_ticks()
@@ -74,7 +85,7 @@ def run():
         # draw player 
         # pygame.draw.circle(screen, "white", player_pos, 15)
         # draw player image on screen
-        screen.blit(player_img, (player_pos.x - player_img_rect.w / 2, player_pos.y - player_img_rect.h / 2))
+        screen.blit(player_img, (player_pos.x, player_pos.y))
 
         # draw projectiles
         for p in player_projectiles:
