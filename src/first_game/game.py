@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 
 def run():
     '''
@@ -32,9 +33,10 @@ def run():
 
     # creating enemy variables
     enemies = []
-    enemies.append(pygame.Rect(800, 100, 50, 50))
-
-
+    for e in range(0, 5):
+        enemies_pos_x = random.randint(0, 1600)
+        enemies_pos_y = random.randint(0, (player_pos.y - 200))
+        enemies.append(pygame.Rect(enemies_pos_x, enemies_pos_y, 50, 50))
 
     '''
     main game logic starting from here
